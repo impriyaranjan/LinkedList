@@ -1,0 +1,389 @@
+import java.io.*;
+import java.util.*;
+
+public class Main
+{   
+public static class Node{
+  int data;
+  Node next;
+}
+public static class LinkedList{
+ static Node head;
+ static Node tail;
+ static int size;
+ 
+static void addLast(int n){
+    Node temp=new Node();
+    temp.data=n;
+    temp.next=null;
+    
+    if(size==0)
+        head=tail=temp;
+    else
+    {  tail.next=temp;
+       tail=temp;
+    }
+     size++;
+  }
+static void addFirst(int n){
+   Node temp=new Node();
+    temp.data=n;
+    temp.next=null;
+    
+    if(size==0)
+        head=tail=temp;
+    else
+    {  temp.next=head;
+       head=temp;
+    }
+     size++;
+}
+public int size(){
+     // System.out.println("Size: "+size);
+    return size;
+   }
+public void display(){
+   if(size==0)
+        System.out.println("Linked List is Empty!!");
+    else
+    {  Node temp=head;
+        while(temp!=null)
+        { System.out.print(temp.data+" ");
+           temp=temp.next;
+        }
+       System.out.println();
+     /* for(Node temp=head: temp!=null; temp=temp.next)
+            System.out.print(temp.data +" ");
+        System.out.println(); */   
+    }
+  }
+public void removeFirst(){
+  if(size==0)
+    System.out.println("LinkedList is Empty");
+  else if(size==1){
+    head=tail=null;
+    size--;
+  }else{
+    head=head.next;
+    size--;
+  }
+}
+public void removeLast(){
+    if(size==0)
+        System.out.println("List is Empty");
+    else if(size==1){
+        head=tail=null;
+        size=0;
+    }else{
+        Node prev=head;
+        for(int i=0;i<size-2;i++)
+            prev=prev.next;
+        tail=prev;
+        prev.next=null;
+        size--;
+    }
+}
+public int getFirst(){
+    if(size==0)
+    {    System.out.println("List is Empty");
+         return -1;
+    }
+    else
+        return head.data;
+}
+public int getLast(){
+    if(size==0)
+    {    System.out.println("List is Empty");
+         return -1;
+    }
+    else
+        return tail.data;
+}
+public int getAt(int idx){
+    if(size==0){
+        System.out.println("List is Empty");
+        return -1;
+    }else if(idx<0 ||idx >= size){
+        System.out.println("Invalid Index");
+        return -1;
+    }else{
+        Node temp=head;
+        for(int i=0;i<idx;i++)
+            temp=temp.next;
+        return temp.data;
+    }
+}
+private Node getNodeAt(int idx){
+        Node temp=head;
+        for(int i=0;i<idx;i++)
+            temp=temp.next;
+        return temp;
+}
+
+public int kthFromLast(int k){
+    Node slow=head;
+    Node fast=head;
+    
+    for(int i=0;i<k;i++)    // to maintain k distance from slow pointer;
+        fast=fast.next;
+    
+    while(fast!=null){    //untill fast pointer reaches at tail of ll-->slow will reach to kth element;
+        slow=slow.next;
+        fast=fast.next;
+    }
+    return slow.data;
+}
+
+public int findMid(){
+    Node slow=head;
+    Node fast=head;
+    while(fast.next!=null && fast.next.next!=null){
+        slow=slow.next;
+        fast=fast.next.next;
+    }
+    return slow.data;
+}
+
+public static LinkedList mergeTwoSortedLists(LinkedList l1,LinkedList l2){
+    Node one=l1.head;
+    Node two=l2.head;
+    
+    LinkedList res=new LinkedList();
+    while(one!=null && two!=null){
+        if(one.data<two.data){
+            res.addLast(one.data);
+            one=one.next;
+        }else{
+            res.addLast(two.data);
+            two=two.next;
+        }
+    }
+    while(one!=null){
+        res.addLast(one.data);
+        one=one.next;
+    }
+    while(two!=null){
+        res.addLast(two.data);
+        two=two.next;
+    }
+    return res;
+}
+
+public void addAt(int idx,int val){
+   if(idx<0 ||idx>size)
+        System.out.println("Invalid Argument");
+    else if(idx==0)
+        addFirst(val);
+    else if(idx==size)
+        addLast(val);
+    else{
+        Node node=new Node();
+        node.data=val;
+        
+        Node prev=head;
+        for(int i=0;i<idx-1;i++)
+            prev=prev.next;
+        node.next=prev.next;
+        prev.next=node;
+        size++;
+    }
+}
+public void removeAt(int idx){
+   if(idx<0 ||idx>=size)
+        System.out.println("Invalid Argument");
+    else if(idx==0)
+        removeFirst();
+    else if(idx==size-1)
+        removeLast();
+    else{
+        Node prev=head;
+        for(int i=0;i<idx-1;i++)
+            prev=prev.next;
+        prev.next=prev.next.next;
+        size--;
+    }
+}
+
+public void reverseVI(){
+    int li=0;
+    int ri=size-1;
+    while(li<ri){
+        Node left=getNodeAt(li);
+        Node right=getNodeAt(ri);
+        
+        int temp=left.data;
+        left.data=right.data;
+        right.data=temp;
+        
+        li++;
+        ri--;
+    }
+}
+public void reversePI(){
+    Node prev=null;
+    Node curr=head;
+    
+    while(curr!=null){
+        Node next=curr.next;
+        
+        curr.next=prev;
+        
+        prev=curr;   //current and previous node pointer are moving formard!!  
+        curr=next;
+    }
+    Node temp=head;   //Swapping of old head and tail to reverse the Linked List!!
+    head=tail;
+    tail=temp;
+}
+}
+
+public static class LLToStackAdapter{    //to use Linklist as stack we perform O(1)-->addF,remF,getF;
+    LinkedList list=new LinkedList();
+    
+ /*   public void LLToStackAdapter(){
+        list=new LinkedList<>();
+    }      */
+    int size(){
+        return list.size;
+    }
+    void push(int val){
+       list.addFirst(val); 
+    }
+    void pop(){
+        if(list.size==0){
+            System.out.println("Stack underflow");
+           // return -1;
+        }else
+            list.removeFirst();
+    }
+    int top(){
+        if(list.size==0){
+            System.out.println("Stack underflow");
+            return -1;
+        }else
+            return list.getFirst(); 
+    }
+}    
+public static class LLToQueueAdapter{    //Linklist as queue-->Best(addLast-removeFirst),(addFirst,remLast);
+    LinkedList list=new LinkedList();
+    
+    int size(){
+        return list.size();
+    }
+    void add(int val){
+       list.addLast(val); 
+    }
+    void remove(){
+        if(list.size==0){
+            System.out.println("Queue underflow");
+           // return -1;
+        }else
+            list.removeFirst();
+    }
+    int peek(){
+        if(list.size==0){
+            System.out.println("Queue underflow");
+            return -1;
+        }else
+            return list.getFirst(); 
+    }
+}
+
+public static void testList(LinkedList list){
+    if(list.size==0)
+        System.out.println("Empty LinkedList: "+ "Size:"+list.size());   //list.size
+    else{
+    System.out.println("Linked List is Of "+"Size:"+list.size()+ " ;");
+    for(Node temp=list.head;temp!=null;temp=temp.next)
+        System.out.print(temp.data+" ");
+    System.out.println();
+  //  list.size();
+  //  if(list.size>0)
+  //      System.out.println(list.tail.data);
+    }
+}
+public static void main(String[] args){
+   //   LinkedList l1=new LinkedList();
+      
+      LLToStackAdapter llsa=new LLToStackAdapter();
+      LLToQueueAdapter llqa=new LLToQueueAdapter();
+      
+      Main ob=new Main();
+     /* ob.testList(l1);                  //sample input for getting result;
+       l1.addLast(3);
+       l1.addLast(5);
+       l1.addLast(7);
+       l1.addLast(1);
+       l1.addLast(10);
+       ob.testList(l1);
+       l1.removeFirst();
+       ob.testList(l1);
+       System.out.println(l1.getAt(3));
+       l1.addAt(2,17);
+       ob.testList(l1);
+       l1.reverseVI();
+       ob.testList(l1);
+       l1.reversePI();
+       ob.testList(l1);    */
+/*                               //LinkedList as Stack Adapter with push,pop and top operation;
+       llsa.push(10);
+       llsa.push(20);
+       llsa.push(30);
+       llsa.push(40);
+       l1.display();
+       System.out.println(llsa.top());
+       llsa.pop();
+       l1.display();
+       llsa.size();
+       ob.testList(l1);    */
+  /*                           //LinkedList as Queue Adapter with add,remove and peek operation;
+       llqa.add(10);
+       llqa.add(20);
+       llqa.add(30);
+       llqa.add(40);
+       l1.display();
+       System.out.println(llqa.peek());
+       llqa.remove();
+       l1.display();
+       llqa.size();
+       ob.testList(l1);      */
+/*                               //kth element from last;
+       l1.addLast(3);
+       l1.addLast(5);
+       l1.addLast(7);
+       l1.addLast(1);
+       l1.addLast(10);
+       ob.testList(l1);
+       System.out.println("Kth element from last: "+l1.kthFromLast(3));  */
+/*       
+       l1.addLast(3);           //find middle element; if even list then at index n/2 -1 will be mid;
+       l1.addLast(5);
+       l1.addLast(7);
+       l1.addLast(1);
+     //  l1.addLast(10);
+       ob.testList(l1);
+       System.out.println(l1.findMid());
+       l1.findMid();                        */
+       
+      
+      LinkedList l1=new LinkedList();
+      LinkedList l2=new LinkedList();
+      l1.addLast(3);
+      l1.addLast(9);
+      l1.addLast(15);
+       l1.addLast(80);
+       l1.addLast(90);
+       testList(l1);
+        
+       l2.addLast(1);
+       l2.addLast(11);
+       l2.addLast(70);
+       ob.testList(l2);
+     //  System.out.print();
+       LinkedList res=LinkedList.mergeTwoSortedLists(l1,l2);
+      //  res.display();
+       ob.testList(res);
+}
+
+
+}
